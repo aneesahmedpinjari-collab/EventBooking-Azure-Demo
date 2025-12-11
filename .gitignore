@@ -1,12 +1,8 @@
-# Build
+# Build results
 [Bb]in/
 [Oo]bj/
 [Dd]ebug/
 [Rr]elease/
-
-# Database
-*.db
-*.db-*
 
 # User secrets
 **/appsettings.Development.json
@@ -17,3 +13,7 @@
 
 # Mac
 .DS_Store
+
+# Azure publish profile (we'll add this to GitHub Secrets)
+*.PublishSettings
+*.pubxml

@@ -82,7 +82,7 @@ namespace EventBookingSecure.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LoginVulnerable(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -110,38 +110,38 @@ namespace EventBookingSecure.Controllers
         }
 
         // SECURE VERSION - Protected against Open Redirect
-        [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager.PasswordSignInAsync(
-                    model.Email,
-                    model.Password,
-                    model.RememberMe,
-                    lockoutOnFailure: false);
+//         [HttpPost]
+//         [AllowAnonymous]
+//         [ValidateAntiForgeryToken]
+//         public async Task<IActionResult> Login(LoginViewModel model)
+//         {
+//             if (ModelState.IsValid)
+//             {
+//                 var result = await _signInManager.PasswordSignInAsync(
+//                     model.Email,
+//                     model.Password,
+//                     model.RememberMe,
+//                     lockoutOnFailure: false);
 
-                if (result.Succeeded)
-                {
-                    // SECURE: Validate returnUrl before redirecting
-#pragma warning disable CS8604 // Possible null reference argument.
-                    var safeUrl = _urlValidator.GetSafeReturnUrl(model.ReturnUrl, HttpContext);
-#pragma warning restore CS8604 // Possible null reference argument.
-                    return Redirect(safeUrl);
-                }
+//                 if (result.Succeeded)
+//                 {
+//                     // SECURE: Validate returnUrl before redirecting
+// #pragma warning disable CS8604 // Possible null reference argument.
+//                     var safeUrl = _urlValidator.GetSafeReturnUrl(model.ReturnUrl, HttpContext);
+// #pragma warning restore CS8604 // Possible null reference argument.
+//                     return Redirect(safeUrl);
+//                 }
 
-                if (result.IsLockedOut)
-                {
-                    return View("Lockout");
-                }
+//                 if (result.IsLockedOut)
+//                 {
+//                     return View("Lockout");
+//                 }
 
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            }
+//                 ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+//             }
 
-            return View(model);
-        }
+//             return View(model);
+//         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
