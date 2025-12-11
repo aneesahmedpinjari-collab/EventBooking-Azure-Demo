@@ -1,0 +1,93 @@
+@model IEnumerable<Booking>
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="main-container fade-in-up">
+    <div class="mb-4">
+        <h2 class="mb-1">
+            <i class="fas fa-ticket-alt text-primary me-2"></i>My Bookings
+        </h2>
+        <p class="text-muted mb-0">View and manage your event bookings</p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card text-center py-5">
+            <div class="card-body">
+                <i class="fas fa-ticket-alt fa-4x text-muted mb-3"></i>
+                <h3 class="text-muted">No Bookings Yet</h3>
+                <p class="text-muted mb-4">Start exploring events and book your first ticket!</p>
+                <a asp-action="Index" class="btn btn-primary">
+                    <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var booking in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-white border-0 pt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                @if (booking.Status == BookingStatus.Confirmed)
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>Confirmed
+                                    </span>
+                                }
+                                else if (booking.Status == BookingStatus.Pending)
+                                {
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock me-1"></i>Pending
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i>Cancelled
+                                    </span>
+                                }
+                                <small class="text-muted">
+                                    @booking.BookingDate.ToString("MMM dd, yyyy")
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@booking.Event?.Title</h5>
+                            
+                            <div class="mb-2">
+                                <i class="fas fa-calendar text-primary me-2"></i>
+                                <small class="text-muted">@booking.Event?.EventDate.ToString("MMMM dd, yyyy")</small>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                <small class="text-muted">@booking.Event?.Location</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <i class="fas fa-users text-success me-2"></i>
+                                <small class="text-muted">@booking.NumberOfSeats seat(s)</small>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block">Total Amount</small>
+                                    <h4 class="mb-0 text-primary">@booking.TotalAmount.ToString("C")</h4>
+                                </div>
+                                <a asp-action="Details" asp-route-id="@booking.EventId" 
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

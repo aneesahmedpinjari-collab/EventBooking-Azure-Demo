@@ -1,0 +1,154 @@
+@model Event
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="main-container fade-in-up">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title" style="max-height: 400px; object-fit: cover;">
+                }
+                else
+                {
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-calendar-alt fa-5x text-white opacity-50"></i>
+                    </div>
+                }
+                <div class="card-body p-4">
+                    <h1 class="card-title mb-3">@Model.Title</h1>
+                    <p class="lead text-muted">@Model.Description</p>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="mb-3"><i class="fas fa-info-circle text-primary me-2"></i>Event Details</h5>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-calendar text-primary me-3 mt-1"></i>
+                                <div>
+                                    <strong>Date</strong><br>
+                                    <span class="text-muted">@Model.EventDate.ToString("MMMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-map-marker-alt text-danger me-3 mt-1"></i>
+                                <div>
+                                    <strong>Location</strong><br>
+                                    <span class="text-muted">@Model.Location</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-user text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Organizer</strong><br>
+                                    <span class="text-muted">@Model.Organizer?.Email</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5 class="mb-3"><i class="fas fa-ticket-alt text-primary me-2"></i>Booking Info</h5>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-users text-info me-3 mt-1"></i>
+                                <div>
+                                    <strong>Capacity</strong><br>
+                                    <span class="text-muted">@Model.Capacity total seats</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>Available</strong><br>
+                                    <span class="text-muted">@Model.AvailableSeats seats remaining</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-dollar-sign text-warning me-3 mt-1"></i>
+                                <div>
+                                    <strong>Price</strong><br>
+                                    <span class="text-muted">@Model.Price.ToString("C") per seat</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 1rem;">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Book Tickets</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.AvailableSeats > 0)
+                    {
+                        @if (User.IsInRole("User") || User.IsInRole("Admin"))
+                        {
+                            <form asp-action="Book" method="post">
+                                <input type="hidden" name="eventId" value="@Model.Id" />
+                                
+                                <div class="mb-3">
+                                    <label for="seats" class="form-label">Number of Seats</label>
+                                    <input type="number" class="form-control" id="seats" name="seats" 
+                                           min="1" max="@Model.AvailableSeats" value="1" required>
+                                    <small class="text-muted">Max: @Model.AvailableSeats seats</small>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <strong>Total Price:</strong> 
+                                    <span id="totalPrice">@Model.Price.ToString("C")</span>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-success w-100 btn-lg">
+                                    <i class="fas fa-shopping-cart me-2"></i>Book Now
+                                </button>
+                            </form>
+                        }
+                        else if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Only users with booking privileges can book events.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Please <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">login</a> to book tickets.
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-times-circle me-2"></i>
+                            <strong>Sold Out!</strong> No seats available.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Events
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('seats')?.addEventListener('input', function() {
+            const seats = parseInt(this.value) || 1;
+            const pricePerSeat = @Model.Price;
+            const total = seats * pricePerSeat;
+            document.getElementById('totalPrice').textContent = '$' + total.toFixed(2);
+        });
+    </script>
+}

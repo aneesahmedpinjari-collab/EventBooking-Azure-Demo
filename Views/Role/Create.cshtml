@@ -1,0 +1,104 @@
+@model Event
+@{
+    ViewData["Title"] = "Create Event";
+}
+
+<div class="main-container fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <i class="fas fa-calendar-plus fa-2x mb-2"></i>
+                    <h2 class="mb-0">Create New Event</h2>
+                    <p class="text-white-50 mb-0">Share your event with the community</p>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">
+                                <i class="fas fa-heading me-2"></i>Event Title
+                            </label>
+                            <input asp-for="Title" class="form-control form-control-lg" 
+                                   placeholder="e.g., Tech Conference 2024" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">
+                                <i class="fas fa-align-left me-2"></i>Description
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="4" 
+                                      placeholder="Tell us about your event..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="EventDate" class="form-label">
+                                    <i class="fas fa-calendar me-2"></i>Event Date
+                                </label>
+                                <input asp-for="EventDate" class="form-control" type="date" />
+                                <span asp-validation-for="EventDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Location" class="form-label">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Location
+                                </label>
+                                <input asp-for="Location" class="form-control" 
+                                       placeholder="e.g., San Francisco, CA" />
+                                <span asp-validation-for="Location" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-4">
+                                <label asp-for="Capacity" class="form-label">
+                                    <i class="fas fa-users me-2"></i>Capacity
+                                </label>
+                                <input asp-for="Capacity" class="form-control" type="number" 
+                                       min="1" placeholder="100" />
+                                <span asp-validation-for="Capacity" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="Price" class="form-label">
+                                    <i class="fas fa-dollar-sign me-2"></i>Price per Ticket
+                                </label>
+                                <input asp-for="Price" class="form-control" type="number" 
+                                       step="0.01" min="0" placeholder="0.00" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label asp-for="ImageUrl" class="form-label">
+                                    <i class="fas fa-image me-2"></i>Image URL (Optional)
+                                </label>
+                                <input asp-for="ImageUrl" class="form-control" 
+                                       placeholder="https://..." />
+                                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                <i class="fas fa-save me-2"></i>Create Event
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

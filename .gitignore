@@ -1,0 +1,19 @@
+# Build
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+
+# Database
+*.db
+*.db-*
+
+# User secrets
+**/appsettings.Development.json
+
+# IDE
+.vscode/
+.vs/
+
+# Mac
+.DS_Store
