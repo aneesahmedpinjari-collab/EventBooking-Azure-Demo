@@ -10,12 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container
 builder.Services.AddControllersWithViews();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("MySQL connection string 'DefaultConnection' was not found.");
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+    options.UseInMemoryDatabase("EventBooking");
 });
 
 // Configure Identity
@@ -77,7 +74,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var dbContext = services.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync();
+        await dbContext.Database.EnsureCreatedAsync();
         await SeedRoles(services);
         var adminUser = await SeedAdminUser(services);
         await SeedSampleEvents(dbContext, adminUser);
